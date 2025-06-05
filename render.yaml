@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: ai-gif-backend
+    runtime: python
+    buildCommand: "pip install -r backend/requirements.txt"
+    startCommand: "gunicorn app:app --chdir backend/app"
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: UPLOAD_FOLDER
+        value: /tmp/uploads
+    disk:
+      name: ai-gif-uploads
+      mountPath: /tmp/uploads
+
+  - type: static_site
+    name: ai-gif-frontend
+    buildCommand: "cd frontend && npm install && npm run build"
+    publishPath: "/frontend/build"
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://ai-gif-backend.onrender.com
