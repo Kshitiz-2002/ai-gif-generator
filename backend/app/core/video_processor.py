@@ -1,4 +1,5 @@
 import os
+import sys
 import uuid 
 import logging
 from app.services import youtube_service
@@ -51,16 +52,13 @@ def extract_video_segment(video_path, start, end, output_dir=None):
         with VideoFileClip(video_path) as video:
             segment = video.subclipped(start, end)
             
-            # Determine the output directory; default to an "output" folder in the same directory as this script.
             if output_dir is None:
                 base_dir = os.path.dirname(os.path.abspath(__file__))
                 output_dir = os.path.join(base_dir, "output")
             
-            # Ensure that the output directory exists
             if not os.path.exists(output_dir):
                 os.makedirs(output_dir)
             
-            # Create an output file name. Including start and end times helps prevent overwrites.
             output_file = os.path.join(output_dir, f"segment_{start}_{end}.mp4")
             
             segment.write_videofile(output_file, codec="libx264", audio_codec="aac")
@@ -71,24 +69,18 @@ def extract_video_segment(video_path, start, end, output_dir=None):
     
 
 if __name__ == "__main__":
-    import sys
-
-    # Example inputs for testing
     youtube_url = "https://www.youtube.com/watch?v=HCDVN7DCzYE"
-    video_file = None  # Use a valid file if you want to test file uploads
-    request_id = "test_request_123"  # Alternatively, generate a unique id with: str(uuid.uuid4())
+    video_file = None  
+    request_id = "test_request_123"  
 
     try:
-        # Test video processing
         processed_video_path = process_video_input(youtube_url=youtube_url, video_file=video_file, request_id=request_id)
         print(f"Processed video saved at: {processed_video_path}")
 
-        # Set the output directory within your project structure (an "output" folder)
         base_dir = os.path.dirname(os.path.abspath(__file__))
         output_dir = os.path.join(base_dir, "output")
         
-        # Test video segment extraction
-        start_time, end_time = 10, 30  # Example start and end times in seconds
+        start_time, end_time = 10, 30  
         extracted_segment = extract_video_segment(processed_video_path, start_time, end_time, output_dir=output_dir)
         print(f"Extracted video segment saved at: {extracted_segment}")
 
