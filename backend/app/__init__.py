@@ -1,25 +1,24 @@
+# backend/app/__init__.py
+
 from flask import Flask
 from flask_cors import CORS
-from .config import Config
+from .config import configuration
 from .utils.logger import setup_logging
 
-def create_app(config_class=Config):
+def create_app(config_class=None):
     app = Flask(__name__)
-    app.config.from_object(config_class)
-    
-    # Enable CORS
+    app.config.from_object(config_class or configuration)
+
     CORS(app, resources={r"/api/*": {"origins": "*"}})
-    
-    # Initialize logging
+
     setup_logging(app)
-    
-    # Register blueprints
-    from app.routes import gif_routes, utility_routes
-    app.register_blueprint(gif_routes.bp)
-    app.register_blueprint(utility_routes.bp)
-    
-    # Register error handlers
-    from app.utils.error_handlers import register_error_handlers
+
+    from .routes.gif_routes import bp as gif_bp
+    from .routes.utility_routes import bp as util_bp
+    app.register_blueprint(gif_bp, url_prefix="/api")
+    app.register_blueprint(util_bp, url_prefix="/api")
+
+    from .utils.error_handlers import register_error_handlers
     register_error_handlers(app)
-    
+
     return app
