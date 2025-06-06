@@ -9,7 +9,7 @@ class Config:
     GIF_OUTPUT_DIR = os.getenv('GIF_OUTPUT_DIR', '/tmp/gifs')
     MAX_CONTENT_LENGTH = int(os.getenv('MAX_CONTENT_LENGTH', 100 * 1024 * 1024))
     
-    OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+    GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
     
     WHISPER_MODEL = os.getenv('WHISPER_MODEL', 'base')
     MAX_VIDEO_DURATION = int(os.getenv('MAX_VIDEO_DURATION', 600))
