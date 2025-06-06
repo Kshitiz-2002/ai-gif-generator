@@ -2,7 +2,7 @@ import os
 import tempfile
 import uuid
 import logging
-from moviepy import VideoFileClip
+from moviepy.editor import VideoFileClip
 
 from yt_dlp import YoutubeDL
 from yt_dlp.utils import DownloadError, ExtractorError

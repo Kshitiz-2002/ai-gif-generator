@@ -4,6 +4,7 @@ import uuid
 import logging
 from app.services import youtube_service
 from app.utils import storage, validation
+from moviepy.editor import VideoFileClip
 from app.utils.error_handlers import VideoProcessingError
 from app.config import configuration
 
@@ -48,9 +49,8 @@ def extract_video_segment(video_path, start, end, output_dir=None):
       output_file (str): The path to the saved video segment.
     """
     try:
-        from moviepy import VideoFileClip
         with VideoFileClip(video_path) as video:
-            segment = video.subclipped(start, end)
+            segment = video.subclip(start, end)
             
             if output_dir is None:
                 base_dir = os.path.dirname(os.path.abspath(__file__))

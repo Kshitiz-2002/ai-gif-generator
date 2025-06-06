@@ -13,6 +13,9 @@ class Config:
     
     WHISPER_MODEL = os.getenv('WHISPER_MODEL', 'base')
     MAX_VIDEO_DURATION = int(os.getenv('MAX_VIDEO_DURATION', 600))
+    
+    MAX_GIF_DURATION = int(os.getenv('MAX_GIF_DURATION', 15))
+    
     GIF_RESOLUTION = (
         int(os.getenv('GIF_RESOLUTION_WIDTH', 640)),
         int(os.getenv('GIF_RESOLUTION_HEIGHT', 360))
