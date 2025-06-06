@@ -1,5 +1,6 @@
 import os
 import tempfile
+import uuid
 import logging
 from moviepy import VideoFileClip
 
@@ -42,18 +43,9 @@ def get_video_metadata(url):
         raise VideoProcessingError(f"YouTube metadata fetch failed: {e}")
 
 
-def download_youtube_video(url, max_duration=None):
+def download_youtube_video(url, max_duration=None, output_dir=None):
     """
-    Download a YouTube video to a temporary .mp4 file using yt-dlp,
-    selecting a single progressive MP4 (video+audio) so that no FFmpeg merge
-    is required.
-
-    Args:
-        url (str): YouTube URL
-        max_duration (int, optional): Max allowed duration in seconds
-
-    Returns:
-        str: Path to the downloaded MP4 file
+    Download YouTube video with output directory support
     """
     try:
         meta = get_video_metadata(url)
@@ -66,7 +58,11 @@ def download_youtube_video(url, max_duration=None):
             f"Video duration ({length}s) exceeds allowed max ({max_duration}s)"
         )
 
-    temp_path = tempfile.mktemp(suffix=".mp4")
+    if output_dir:
+        os.makedirs(output_dir, exist_ok=True)
+        temp_path = os.path.join(output_dir, f"yt_{uuid.uuid4().hex}.mp4")
+    else:
+        temp_path = tempfile.mktemp(suffix=".mp4")
 
     ydl_opts = {
         "outtmpl": temp_path,
@@ -76,7 +72,7 @@ def download_youtube_video(url, max_duration=None):
     }
 
     try:
-        logger.info(f"Downloading YouTube video (progressive MP4 only): {url}")
+        logger.info(f"Downloading YouTube video: {url}")
         with YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
 
@@ -94,7 +90,6 @@ def download_youtube_video(url, max_duration=None):
             except OSError:
                 pass
         raise VideoProcessingError(f"YouTube download failed: {e}")
-
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
