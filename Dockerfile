@@ -15,10 +15,11 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    ffmpeg \
-    libsm6 \
-    libxext6 \
-    libgl1-mesa-glx && \
+        git \
+        ffmpeg \
+        libsm6 \
+        libxext6 \
+        libgl1-mesa-glx && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
