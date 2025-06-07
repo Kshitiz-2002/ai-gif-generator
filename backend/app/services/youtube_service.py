@@ -26,6 +26,9 @@ def get_video_metadata(url):
         "quiet": True,
         "skip_download": True,
         "forcejson": True,
+        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                      "AppleWebKit/537.36 (KHTML, like Gecko) "
+                      "Chrome/137.0.0.0 Safari/537.36",
     }
     try:
         logger.info(f"Fetching metadata for: {url} using yt-dlp")
@@ -34,7 +37,7 @@ def get_video_metadata(url):
         return {
             "title": info.get("title"),
             "author": info.get("uploader"),
-            "length": info.get("duration"),         
+            "length": info.get("duration"),
             "thumbnail_url": info.get("thumbnail"),
             "views": info.get("view_count"),
         }
@@ -45,7 +48,7 @@ def get_video_metadata(url):
 
 def download_youtube_video(url, max_duration=None, output_dir=None):
     """
-    Download YouTube video with output directory support
+    Download YouTube video with output directory support.
     """
     try:
         meta = get_video_metadata(url)
@@ -69,6 +72,9 @@ def download_youtube_video(url, max_duration=None, output_dir=None):
         "format": "best[ext=mp4]",
         "quiet": True,
         "noprogress": True,
+        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                      "AppleWebKit/537.36 (KHTML, like Gecko) "
+                      "Chrome/137.0.0.0 Safari/537.36",
     }
 
     try:
@@ -90,6 +96,7 @@ def download_youtube_video(url, max_duration=None, output_dir=None):
             except OSError:
                 pass
         raise VideoProcessingError(f"YouTube download failed: {e}")
+
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
