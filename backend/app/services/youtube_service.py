@@ -36,6 +36,8 @@ def get_video_metadata(url):
         "http_headers": {
             "Referer": "https://www.youtube.com",
         },
+        "youtube_include_dash_manifest": False,
+        "cookiefile": "/path/to/cookies.txt",
     }
     try:
         logger.info(f"Fetching metadata for: {url} using yt-dlp")
@@ -87,6 +89,8 @@ def download_youtube_video(url, max_duration=None, output_dir=None):
         "http_headers": {
             "Referer": "https://www.youtube.com",
         },
+        "youtube_include_dash_manifest": False,
+        "cookiefile": "/path/to/cookies.txt",
     }
 
     try:
