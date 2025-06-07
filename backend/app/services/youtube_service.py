@@ -26,9 +26,16 @@ def get_video_metadata(url):
         "quiet": True,
         "skip_download": True,
         "forcejson": True,
+        # Mimic a modern browser User-Agent to improve compatibility with YouTube
         "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
                       "AppleWebKit/537.36 (KHTML, like Gecko) "
                       "Chrome/137.0.0.0 Safari/537.36",
+        # Bypass geographic restrictions if possible
+        "geo_bypass": True,
+        # Setting a Referer header similar to a normal browser request
+        "http_headers": {
+            "Referer": "https://www.youtube.com",
+        },
     }
     try:
         logger.info(f"Fetching metadata for: {url} using yt-dlp")
@@ -72,9 +79,14 @@ def download_youtube_video(url, max_duration=None, output_dir=None):
         "format": "best[ext=mp4]",
         "quiet": True,
         "noprogress": True,
+        # Use the same custom User-Agent for downloads
         "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
                       "AppleWebKit/537.36 (KHTML, like Gecko) "
                       "Chrome/137.0.0.0 Safari/537.36",
+        "geo_bypass": True,
+        "http_headers": {
+            "Referer": "https://www.youtube.com",
+        },
     }
 
     try:
