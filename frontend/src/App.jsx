@@ -1,24 +1,29 @@
 import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Loader2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
-function App() {
+export default function App() {
   const [prompt, setPrompt] = useState("");
   const [youtubeUrl, setYoutubeUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [gifs, setGifs] = useState([]);
   const [contentAnalysis, setContentAnalysis] = useState("");
+  const [requestId, setRequestId] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      // Prepare a FormData object to send with the POST request.
       const formData = new FormData();
       formData.append("prompt", prompt);
       formData.append("youtube_url", youtubeUrl);
 
-      // Adjust the URL below to point to your backend API.
-      const response = await fetch("http://localhost:5001/api/gif/generate", {
+      const response = await fetch("/api/gif/generate", {
         method: "POST",
         body: formData,
       });
@@ -26,77 +31,128 @@ function App() {
       const data = await response.json();
       setGifs(data.gifs || []);
       setContentAnalysis(data.content_analysis || "");
+      setRequestId(data.request_id || "");
     } catch (error) {
       console.error("Error generating GIFs!", error);
-    } finally {
-      setLoading(false);
     }
+
+    setLoading(false);
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-3xl mx-auto bg-white rounded-lg shadow p-6">
-        <h1 className="text-3xl font-bold mb-4 text-center">
-          AI GIF Generator
-        </h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-gray-700">Prompt:</label>
-            <input
-              type="text"
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              className="w-full border border-gray-300 rounded-md p-2 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring focus:ring-blue-200"
-              placeholder="Enter your prompt (e.g. funny moments)"
-            />
+    <div className="flex flex-col h-screen w-screen overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50">
+      <Card className="flex flex-col flex-1 w-full h-full bg-white p-8 shadow-none rounded-none">
+        {/* Header */}
+        <CardHeader className="text-center mb-6">
+          <CardTitle className="text-3xl font-bold text-black">
+            AI GIF Generator
+          </CardTitle>
+        </CardHeader>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="flex flex-col space-y-5 mb-8">
+          <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+            <div className="flex-1">
+              <Label htmlFor="prompt" className="text-black">
+                Prompt
+              </Label>
+              <Input
+                id="prompt"
+                placeholder="e.g. funny moments"
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                className="text-black"
+              />
+            </div>
+            <div className="flex-1">
+              <Label htmlFor="youtubeUrl" className="text-black">
+                YouTube URL
+              </Label>
+              <Input
+                id="youtubeUrl"
+                placeholder="https://www.youtube.com/..."
+                value={youtubeUrl}
+                onChange={(e) => setYoutubeUrl(e.target.value)}
+                className="text-black"
+              />
+            </div>
           </div>
-          <div>
-            <label className="block text-gray-700">YouTube URL:</label>
-            <input
-              type="text"
-              value={youtubeUrl}
-              onChange={(e) => setYoutubeUrl(e.target.value)}
-              className="w-full border border-gray-300 rounded-md p-2 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring focus:ring-blue-200"
-              placeholder="Enter YouTube URL"
-            />
-          </div>
-          <button
+
+          <Button
             type="submit"
+            className="w-full py-3 bg-gray-900 hover:bg-black"
             disabled={loading}
-            className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 transition"
           >
-            {loading ? "Generating..." : "Generate GIFs"}
-          </button>
+            {loading && (
+              <Loader2 className="animate-spin h-5 w-5 mr-2 text-white" />
+            )}
+            <span className="text-white">
+              {loading ? "Generating..." : "Generate GIFs"}
+            </span>
+          </Button>
         </form>
 
+        {/* Content Analysis */}
         {contentAnalysis && (
-          <div className="mt-6">
-            <h2 className="text-2xl font-semibold mb-2">Content Analysis</h2>
-            <p className="text-gray-800">{contentAnalysis}</p>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="mb-8"
+          >
+            <h2 className="text-2xl font-semibold text-black mb-2">
+              Content Analysis
+            </h2>
+            <p className="text-black leading-relaxed">{contentAnalysis}</p>
+          </motion.div>
         )}
 
-        {gifs.length > 0 && (
-          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {gifs.map((gif, idx) => (
-              <div
-                key={idx}
-                className="border rounded-lg overflow-hidden shadow"
-              >
-                <img src={gif.url} alt={gif.caption} className="w-full" />
-                <div className="p-2">
-                  <p className="text-gray-700 font-medium">{gif.caption}</p>
-                  <p className="text-xs text-gray-500">
-                    Time: {gif.start} - {gif.end}s
+        {/* GIF Grid */}
+        <AnimatePresence>
+          {gifs.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+            >
+              {requestId && (
+                <div className="col-span-full">
+                  <p className="text-sm text-gray-600">
+                    Request ID:{" "}
+                    <span className="font-mono text-black">{requestId}</span>
                   </p>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+              )}
+
+              {gifs.map((gif) => (
+                <motion.div
+                  key={gif.id}
+                  whileHover={{ scale: 1.02 }}
+                  className="bg-white rounded-xl shadow-md overflow-hidden"
+                >
+                  <img
+                    src={gif.url}
+                    alt={gif.caption}
+                    className="w-full object-cover h-56"
+                  />
+                  <CardContent className="p-4">
+                    <p className="font-medium text-black mb-1">
+                      {gif.caption}
+                    </p>
+                    <p className="text-xs text-gray-600">
+                      Time: {gif.start}s – {gif.end}s
+                      <br />
+                      Duration: {gif.duration.toFixed(2)}s
+                    </p>
+                  </CardContent>
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </Card>
     </div>
   );
 }
-
-export default App;
