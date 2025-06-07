@@ -1,5 +1,3 @@
-Here is the `README.md` content reconstructed from the images you shared, matching the structure and style:
-
 ````markdown
 # 🧠 AI-GIF-GENERATOR
 
