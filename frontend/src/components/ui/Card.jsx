@@ -10,7 +10,7 @@ export function Card({ children, className = '' }) {
       {children}
     </div>
   );
-}
+} 
 
 export function CardHeader({ children, className = '' }) {
   return (
