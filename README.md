@@ -1,7 +1,6 @@
-````markdown
 # 🧠 AI-GIF-GENERATOR
 
-_Transforming videos into captivating GIFs effortlessly._
+*Transforming videos into captivating GIFs effortlessly.*
 
 ![Last Commit](https://img.shields.io/badge/last%20commit-today-brightgreen)
 ![Python](https://img.shields.io/badge/python-81.3%25-blue)
@@ -11,20 +10,21 @@ _Transforming videos into captivating GIFs effortlessly._
 
 ### 🔧 Built with the tools and technologies:
 
-`Flask` `JSON` `Markdown` `Sphinx` `npm` `Autoprefixer` `PostCSS` `tqdm` `JavaScript` `SymPy`  
-`GNU Bash` `FFmpeg` `React` `NumPy` `Numba` `Pytest` `Docker` `Python` `GitHub Actions`  
+`Flask` `JSON` `Markdown` `Sphinx` `npm` `Autoprefixer` `PostCSS` `tqdm` `JavaScript` `SymPy`
+`GNU Bash` `FFmpeg` `React` `NumPy` `Numba` `Pytest` `Docker` `Python` `GitHub Actions`
 `Google Cloud Storage` `AIOHTTP` `Vite` `ESLint` `OpenAI` `Google Gemini` `Pydantic` `YAML`
 
 ---
 
 ## 📑 Table of Contents
 
-- [Overview](#overview)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Usage](#usage)
-  - [Testing](#testing)
+* [Overview](#overview)
+* [Getting Started](#getting-started)
+
+  * [Prerequisites](#prerequisites)
+  * [Installation](#installation)
+  * [Usage](#usage)
+  * [Testing](#testing)
 
 ---
 
@@ -34,15 +34,15 @@ _Transforming videos into captivating GIFs effortlessly._
 
 ### 💡 Why ai-gif-generator?
 
-This project simplifies the process of generating GIFs from videos, enhancing user engagement and creativity.  
+This project simplifies the process of generating GIFs from videos, enhancing user engagement and creativity.
 The core features include:
 
-- 🧠 **AI-Powered GIF Generation**: Create captivating GIFs from video segments based on user-defined themes.
-- 🐳 **Multi-Stage Docker Setup**: Ensure consistent deployment across environments with a streamlined containerized architecture.
-- 🧩 **Seamless Frontend-Backend Integration**: Enjoy a responsive UI built with React, facilitating smooth interactions with backend services.
-- 🚀 **Automated Deployment Workflows**: Streamline updates and enhance reliability through continuous integration and delivery practices.
-- 🔐 **Robust Error Handling**: Improve user experience with clear feedback and maintain application stability.
-- 🛠️ **Customizable Input Components**: Promote reusability and consistency in the UI, enhancing overall user interaction.
+* 🧠 **AI-Powered GIF Generation**: Create captivating GIFs from video segments based on user-defined themes.
+* 🐳 **Multi-Stage Docker Setup**: Ensure consistent deployment across environments with a streamlined containerized architecture.
+* 🧩 **Seamless Frontend-Backend Integration**: Enjoy a responsive UI built with React, facilitating smooth interactions with backend services.
+* 🚀 **Automated Deployment Workflows**: Streamline updates and enhance reliability through continuous integration and delivery practices.
+* 🔐 **Robust Error Handling**: Improve user experience with clear feedback and maintain application stability.
+* 🛠️ **Customizable Input Components**: Promote reusability and consistency in the UI, enhancing overall user interaction.
 
 ---
 
@@ -52,9 +52,9 @@ The core features include:
 
 This project requires the following dependencies:
 
-- **Programming Language**: Python  
-- **Package Manager**: Pip, Npm  
-- **Container Runtime**: Docker  
+* **Programming Language**: Python
+* **Package Manager**: Pip, Npm
+* **Container Runtime**: Docker
 
 ---
 
@@ -63,9 +63,10 @@ This project requires the following dependencies:
 Build ai-gif-generator from the source and install dependencies:
 
 1. **Clone the repository**:
+
    ```bash
    git clone https://github.com/kshitiz-2002/ai-gif-generator
-````
+   ```
 
 2. **Navigate to the project directory**:
 
@@ -142,8 +143,3 @@ npm test
 ```
 
 [🔝 Return](#ai-gif-generator)
-
-```
-
-Let me know if you'd like this as a downloadable `.md` file or if you want to add badges or frameworks not yet listed!
-```
