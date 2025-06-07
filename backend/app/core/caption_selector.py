@@ -8,16 +8,25 @@ logger = logging.getLogger(__name__)
 
 def select_key_moments(transcript_segments, theme_prompt, max_moments=3):
     """
-    Select key moments using Gemini if available, otherwise fallback to NLP
+    Select key moments using Gemini if available; if Gemini returns no
+    results, fallback to native NLP-based moment selection.
     """
     try:
         if configuration.GEMINI_API_KEY:
             logger.info("Using Gemini for moment selection")
-            return gemini_service.select_key_moments(
+            moments = gemini_service.select_key_moments(
                 transcript_segments,
                 theme_prompt,
                 max_moments
             )
+            if not moments:
+                logger.warning("Gemini returned no moments, falling back to NLP method.")
+                moments = select_moments_fallback(
+                    transcript_segments,
+                    theme_prompt,
+                    max_moments
+                )
+            return moments
         else:
             logger.info("Using fallback NLP for moment selection")
             return select_moments_fallback(
@@ -29,8 +38,9 @@ def select_key_moments(transcript_segments, theme_prompt, max_moments=3):
         logger.error(f"Moment selection failed: {str(e)}")
         raise CaptionSelectionError(f"Caption selection error: {str(e)}")
 
+
 def analyze_transcript_content(transcript, prompt):
-    """Analyze transcript content using Gemini"""
+    """Analyze transcript content using Gemini if available; else a simple fallback."""
     try:
         if configuration.GEMINI_API_KEY:
             transcript_text = "\n".join(
@@ -44,7 +54,7 @@ def analyze_transcript_content(transcript, prompt):
     except Exception as e:
         logger.error(f"Content analysis failed: {str(e)}")
         return "Content analysis unavailable"
-    
+
 
 if __name__ == "__main__":
     import sys

@@ -2,6 +2,7 @@ import os
 import sys
 import logging
 import imageio
+import tempfile
 from moviepy.editor import VideoFileClip, CompositeVideoClip, ImageClip
 from app.config import configuration
 from app.utils.error_handlers import GIFGenerationError
@@ -41,17 +42,23 @@ def generate_captioned_gif(video_path: str, start: float, end: float, caption: s
         raise GIFGenerationError(f"Video processing error: {str(e)}")
 
 def create_optimized_caption(text, video_size, duration):
-    """Create an optimized text caption with better rendering"""    
+    """Create an optimized text caption with better readability.
+    
+    This version adds extra vertical padding and applies a stroke to the text,
+    ensuring that multi-line captions are fully visible and clearer on the video.
+    """
     width, height = video_size
     font_size = max(20, int(height * 0.05))
     max_width = int(width * 0.9)
     
+    # Attempt to load Arial. Fall back if not found.
     try:
         font = ImageFont.truetype("arial.ttf", font_size)
     except OSError:
         logger.warning("Arial font not found; falling back to default font.")
         font = ImageFont.load_default()
     
+    # Prepare a temporary image to measure text dimensions.
     test_img = Image.new('RGB', (10, 10))
     test_draw = ImageDraw.Draw(test_img)
     
@@ -59,6 +66,7 @@ def create_optimized_caption(text, video_size, duration):
     words = text.split()
     current_line = ""
     
+    # Break the text into lines so that each line fits within max_width.
     for word in words:
         test_line = current_line + (" " + word if current_line else word)
         text_width = test_draw.textlength(test_line, font=font)
@@ -70,33 +78,70 @@ def create_optimized_caption(text, video_size, duration):
     if current_line:
         lines.append(current_line)
     
-    text_height = len(lines) * (font_size + 5)
+    # Add extra vertical padding for clarity.
+    vertical_padding = 10
+    line_spacing = 5
+    text_height = len(lines) * (font_size + line_spacing) + vertical_padding * 2
+    
+    # Create a transparent image with extra padding
     text_img = Image.new('RGBA', (width, text_height), (0, 0, 0, 0))
     draw = ImageDraw.Draw(text_img)
     
-    y_text = 0
-    for line in lines:
-        for dx in [-1, 1]:
-            for dy in [-1, 1]:
-                draw.text((width//2 + dx, y_text + dy), line, font=font, fill="black", anchor="mm")
-        draw.text((width//2, y_text), line, font=font, fill="white", anchor="mm")
-        y_text += font_size + 5
+    # Starting y coordinate includes the extra padding.
+    y_text = vertical_padding
+    # Stroke properties for better clarity (adjust stroke_width as needed)
+    stroke_width = 2
+    stroke_fill = "black"
     
+    # Draw each line with center alignment and a stroke
+    for line in lines:
+        # Use the center of the image width and current y coordinate.
+        draw.text(
+            (width // 2, y_text),
+            line,
+            font=font,
+            fill="white",
+            anchor="mm",
+            stroke_width=stroke_width,
+            stroke_fill=stroke_fill
+        )
+        y_text += font_size + line_spacing
+    
+    # Create an image clip from the text image and position it at the bottom.
     text_clip = ImageClip(np.array(text_img)).set_duration(duration).set_position(("center", "bottom"))
     return text_clip
 
 def generate_optimized_gif(clip, output_path, fps):
-    """Generate optimized GIF with better quality and smaller size"""
-    clip.write_videofile("temp.mp4", fps=fps, codec="libx264", audio_codec="aac")
+    """
+    Generate an optimized GIF with better quality and smaller size.
     
-    reader = imageio.get_reader("temp.mp4")
-    writer = imageio.get_writer(output_path, fps=fps, palettesize=256, quantizer="kraken", subrectangles=True)
+    This function writes the given video clip to a temporary MP4 file using a unique filename,
+    then uses imageio to read the temporary video and generate the GIF. After completion, it
+    properly closes all file handles and removes the temporary file.
     
-    for frame in reader:
-        writer.append_data(frame)
+    Args:
+        clip: The video clip (MoviePy clip) to convert into a GIF.
+        output_path: The path where the resulting GIF will be saved.
+        fps: Frames per second for both video writing and GIF generation.
+    """
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as temp_file:
+        temp_filename = temp_file.name
+
+    # Write the video clip to the temporary file.
+    clip.write_videofile(
+        temp_filename, 
+        fps=fps, 
+        codec="libx264", 
+        audio_codec="aac", 
+        verbose=False
+    )
     
-    writer.close()
-    os.remove("temp.mp4")
+    with imageio.get_reader(temp_filename) as reader:
+        with imageio.get_writer(output_path, fps=fps, palettesize=256, quantizer="kraken", subrectangles=True) as writer:
+            for frame in reader:
+                writer.append_data(frame)
+    
+    os.remove(temp_filename)
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
