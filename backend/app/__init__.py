@@ -5,7 +5,7 @@ from .utils.logger import setup_logging
 import os
 
 def create_app(config_class=None):
-    app = Flask(__name__)  # No static folder, as static serving is removed
+    app = Flask(__name__)  
 
     app.config.from_object(config_class or configuration)
 
@@ -62,7 +62,6 @@ def register_error_handlers(app):
     register_error_handlers(app)
     app.logger.info("Registered error handlers")
 
-# Explicitly create the Flask app instance for Gunicorn
 app = create_app()
 
 if __name__ == "__main__":
