@@ -1,7 +1,7 @@
 import os
 import multiprocessing
 
-bind = f"0.0.0.0:{os.environ.get('PORT', '5000')}"
+bind = f"0.0.0.0:{os.environ.get('PORT', '5000')}"  # Render sets the PORT env variable
 
 workers = multiprocessing.cpu_count() * 2 + 1
 worker_class = "gthread"

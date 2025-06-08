@@ -4,9 +4,8 @@ from .config import configuration
 from .utils.logger import setup_logging
 import os
 
-
 def create_app(config_class=None):
-    app = Flask(__name__) 
+    app = Flask(__name__)  # No static folder, as static serving is removed
 
     app.config.from_object(config_class or configuration)
 
@@ -35,7 +34,6 @@ def create_app(config_class=None):
 
     return app
 
-
 def ensure_directories(app):
     """Create required directories if they don't exist"""
     for directory in [
@@ -47,7 +45,6 @@ def ensure_directories(app):
             os.makedirs(directory, exist_ok=True)
             app.logger.info(f"Created directory: {directory}")
 
-
 def register_blueprints(app):
     """Register application blueprints"""
     from .routes.gif_routes import bp as gif_bp
@@ -58,7 +55,6 @@ def register_blueprints(app):
 
     app.logger.info("Registered API blueprints")
 
-
 def register_error_handlers(app):
     """Register custom error handlers"""
     from .utils.error_handlers import register_error_handlers
@@ -66,7 +62,7 @@ def register_error_handlers(app):
     register_error_handlers(app)
     app.logger.info("Registered error handlers")
 
-
+# Explicitly create the Flask app instance for Gunicorn
 app = create_app()
 
 if __name__ == "__main__":
