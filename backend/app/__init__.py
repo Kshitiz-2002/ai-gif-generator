@@ -6,9 +6,7 @@ import os
 
 
 def create_app(config_class=None):
-    app = Flask(
-        __name__, static_folder="../static", static_url_path=""
-    )  
+    app = Flask(__name__)
 
     app.config.from_object(config_class or configuration)
 
@@ -30,10 +28,6 @@ def create_app(config_class=None):
     register_blueprints(app)
 
     register_error_handlers(app)
-
-    @app.route("/")
-    def index():
-        return app.send_static_file("index.html")
 
     app.logger.info("Application initialized successfully")
     app.logger.info(
