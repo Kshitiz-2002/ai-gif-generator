@@ -6,7 +6,7 @@ import os
 
 
 def create_app(config_class=None):
-    app = Flask(__name__)
+    app = Flask(__name__) 
 
     app.config.from_object(config_class or configuration)
 
@@ -22,11 +22,8 @@ def create_app(config_class=None):
     )
 
     setup_logging(app)
-
     ensure_directories(app)
-
     register_blueprints(app)
-
     register_error_handlers(app)
 
     app.logger.info("Application initialized successfully")
